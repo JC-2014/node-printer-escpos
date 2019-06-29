@@ -48,3 +48,10 @@ getPixels('https://b.appsimg.com/upload/momin/2019/02/21/133/1550737570483.png',
 })
 </code>
 </pre>
+
+# thanks
+https://github.com/tojocky/node-printer
+https://github.com/song940/node-escpos
+https://github.com/alexeyten/qr-image
+https://github.com/scijs/get-pixels
+nd so on/etc.
