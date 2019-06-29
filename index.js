@@ -62,6 +62,16 @@ Printer.prototype.left = function (size) {
   return this;
 };
 
+Printer.prototype.line = function(str, length) {
+  this.align('LT');
+  let lines = new Array(length || 32).fill(str || '-')
+  return this.text(lines.join(''))
+};
+
+Printer.prototype.blank = function() {
+  return this.text('\n')
+};
+
 /**
  * Fix bottom margin
  * @param  {[String]} size
