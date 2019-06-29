@@ -35,8 +35,12 @@ esc
     this.flush()
     printer.print(this.buffer._buffer)
   })
+</code>
+</pre>
 
 # print custom image
+<pre>
+<code>
 getPixels('https://b.appsimg.com/upload/momin/2019/02/21/133/1550737570483.png', function(err, pixels) {
   this.image(new Image(pixels))
   this.flush()
