@@ -14,11 +14,11 @@ Printer.Image = Image
 Printer.getPixels = getPixels
 Printer.getPrinters = printer.getPrinters
 
-Printer.prototype.print = function (buffer) {
+Printer.prototype.print = function (buffer, orderNumber) {
   let jobsLen = this.jobs.length
   let obj = {
     buffer,
-    jobId: jobsLen + '' + parseInt(Math.random() * 100000),
+    jobId: orderNumber || (jobsLen + '' + parseInt(Math.random() * 100000)),
     error: null,
     completeId: null
   }
@@ -35,11 +35,13 @@ Printer.prototype.do = function (jobObject) {
     success (id) {
       console.log("sent to printer with ID: " + id)
       jobObject.completeId = id
+      that.printComplete && that.printComplete(jobObject)
       that.doNext(jobObject.jobId)
     },
     error (err) {
       console.log(err)
       jobObject.error = err
+      that.printComplete && that.printComplete(jobObject)
       that.doNext(jobObject.jobId)
     }
   })
