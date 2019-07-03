@@ -2,7 +2,7 @@
   "name": "node-printer-escpos",
   "title": "node-printer-escpos",
   "description": "node-printer-escpos",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "main.js",
   "email": "406087475@qq.com",
   "keywords": [
@@ -13,6 +13,7 @@
   "dependencies": {
     "get-pixels": "^3.3.2",
     "iconv-lite": "^0.4.24",
+    "jimp": "^0.6.4",
     "mutable-buffer": "^2.1.1",
     "printer": "^0.2.2",
     "qr-image": "^3.2.0"

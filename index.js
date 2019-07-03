@@ -1,4 +1,5 @@
 'use strict';
+const jimp = require('jimp');
 const util = require('util');
 const qr = require('qr-image');
 const iconv = require('iconv-lite');
@@ -487,18 +488,37 @@ Printer.prototype.qrcode = function (code, version, level, size) {
  */
 Printer.prototype.qrimage = function (content, options, callback) {
   var self = this;
-  if (typeof options == 'function') {
-    callback = options;
-    options = null;
-  }
-  options = options || { type: 'png', mode: 'dhdw' };
+  options = Object.assign({ type: 'png', mode: 'dhdw' }, options);
+  // if (typeof options == 'function') {
+  //   callback = options;
+  //   options = null;
+  // }
   var buffer = qr.imageSync(content, options);
   var type = ['image', options.type].join('/');
-  getPixels(buffer, type, function (err, pixels) {
-    if (err) return callback && callback(err);
-    self.raster(new Image(pixels), options.mode);
-    callback && callback.call(self, null, self);
-  });
+  let {
+    width,
+    height
+  } = options
+  if (width || height) {
+    if (width === 'auto') width = jimp.AUTO
+    if (height === 'auto') height = jimp.AUTO
+    jimp.read(buffer).then(image => {
+      image.resize(width, height)
+      image.getBuffer(jimp.MIME_PNG, (error, buf) => {
+        getPixels(buf, type, function (err, pixels) {
+          if (err) return callback && callback(err);
+          self.raster(new Image(pixels), options.mode);
+          callback && callback.call(self, null, self);
+        });
+      })
+    })
+  } else {
+    getPixels(buffer, type, function (err, pixels) {
+      if (err) return callback && callback(err);
+      self.raster(new Image(pixels), options.mode);
+      callback && callback.call(self, null, self);
+    });
+  }
   return this;
 };
 
