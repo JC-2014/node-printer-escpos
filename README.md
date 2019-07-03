@@ -22,7 +22,7 @@ printer.print(esc.buffer._buffer)
 </code>
 </pre>
 
-# print text、barcode、qrcode
+# print text、barcode、qrcode（可以设置二维码大小）
 <pre>
 <code>
 esc
@@ -31,7 +31,7 @@ esc
   .text('测试下打印二维码')
   .align('CT')
   .barcode('1234567', 'EAN8')
-  .qrimage('https://vip.com', function(err){
+  .qrimage('https://vip.com', {width: 200, height: 'auto'}, function(err){
     this.flush()
     printer.print(this.buffer._buffer)
   })
