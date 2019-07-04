@@ -295,6 +295,30 @@ Printer.prototype.size = function (width, height) {
   return this;
 };
 
+Printer.prototype.fontSize = function (size = 1) {
+  if (size > 8 || size <= 0 ) {
+    size = 1
+  }
+
+  let cmd = [
+    ['\x1d\x21\x00', '\x1d\x21\x00'],
+    ['\x1d\x21\x10', '\x1d\x21\x01'],
+    ['\x1d\x21\x20', '\x1d\x21\x02'],
+    ['\x1d\x21\x30', '\x1d\x21\x03'],
+    ['\x1d\x21\x40', '\x1d\x21\x04'],
+    ['\x1d\x21\x50', '\x1d\x21\x05'],
+    ['\x1d\x21\x60', '\x1d\x21\x06'],
+    ['\x1d\x21\x70', '\x1d\x21\x07']
+  ]
+
+  let cmdBuffer = cmd[size - 1]
+  cmdBuffer.forEach(buf => {
+    this.buffer.write(buf);
+  })
+
+  return this;
+};
+
 /**
  * [set character spacing]
  * @param  {[type]}    n     [description]

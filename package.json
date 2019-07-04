@@ -2,7 +2,7 @@
   "name": "node-printer-escpos",
   "title": "node-printer-escpos",
   "description": "node-printer-escpos",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "main.js",
   "email": "406087475@qq.com",
   "keywords": [
