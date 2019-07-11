@@ -73,6 +73,24 @@ Printer.prototype.blank = function() {
   return this.text('\n')
 };
 
+Printer.prototype.blankLineHeight = function(lineHeight = 22) {
+  this.lineHeight(lineHeight)
+  this.blank()
+  this.lineHeightNormal()
+  return this
+};
+
+Printer.prototype.lineHeight = function(lineHeight = 22) {
+  this.buffer.write('\x1b\x33')
+  this.buffer.writeUInt16LE(lineHeight)
+  return this
+};
+
+Printer.prototype.lineHeightNormal = function() {
+  this.buffer.write('\x1b\x32')
+  return this
+};
+
 /**
  * Fix bottom margin
  * @param  {[String]} size
