@@ -384,6 +384,26 @@ Printer.prototype.hardware = function (hw) {
  * @return {[Printer]} printer  [the escpos printer instance]
  */
 
+ Printer.prototype.vipbarcode = function (codeStr) {
+  // 都使用 CODE93 格式
+  this.align('CT')
+  // this.buffer.write('\x1D\x77\x01')
+  // this.buffer.write('\x1D\x68\x64')
+  // this.buffer.write('\x1D\x66\x00')
+  // this.buffer.write('\x1D\x48\x02')
+  this.buffer.write('\x1D\x6B\x48')
+  let length = codeStr.length
+  if (length < 2) {
+    throw new TypeError('barcode requires code length >=2');
+  }
+  this.buffer.writeUIntBE('' + length)
+  this.buffer.writeCString(codeStr)
+  this.buffer.writeCString(codeStr)
+  this.buffer.write('\x0a')
+  this.align('LT')
+  return this
+ }
+
 Printer.prototype.barcode = function (code, type, options) {
   options = options || {};
   var width, height, position, font, includeParity;
