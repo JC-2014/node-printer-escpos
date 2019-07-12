@@ -2,14 +2,14 @@ const printer = require('printer')
 const getPixels = require('get-pixels')
 const escpos = require("./index")
 const Image = require('./image')
-const esc = new escpos({}, {})
+// const esc = new escpos({}, {})
 
 function Printer (printerName) {
   this.jobs = []
   this.printerName = printerName
 }
 
-Printer.esc = esc
+Printer.escpos = escpos
 Printer.Image = Image
 Printer.getPixels = getPixels
 Printer.getPrinters = printer.getPrinters
@@ -32,11 +32,20 @@ Printer.prototype.jobHandler = function (jobObject) {
   let jobId = jobObject.jobId
   let printerName = this.printerName
   let jobInfo = printer.getJob(printerName, jobId)
+  console.log(jobInfo)
+  let time = jobInfo.time
+  let status = jobInfo.status
+
+  if (status.includes('ERROR')) {
+    return complete('print error')
+  }
+
   if (jobInfo.status.length === 0 && jobInfo.time === 0) {
     // 未打印 两秒后重新拉取下任务信息
     setTimeout(function () {
       try {
         jobInfo = printer.getJob(printerName, jobId)
+        console.log(jobInfo)
         if (jobInfo.status.length === 0 && jobInfo.time === 0) {
           // 打印失败，取消队列
           let cancel = printer.setJob(printerName, jobId, 'CANCEL')
@@ -48,6 +57,8 @@ Printer.prototype.jobHandler = function (jobObject) {
         }
       } catch(e) {
         console.log(e)
+        // 防止重复更新打印状态
+        if (jobObject.success) return
         complete(e.message)
       }
     }, 2000)
@@ -83,8 +94,8 @@ Printer.prototype.do = function (jobObject) {
     success (jobId) {
       console.log("sent to printer with ID: " + jobId)
       jobObject.jobId = jobId
-      that.printStart && that.printStart(jobObject)
       that.jobHandler(jobObject)
+      that.printStart && that.printStart(jobObject)
     },
     error (error) {
       console.log('print error', error)

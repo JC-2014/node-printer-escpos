@@ -384,7 +384,7 @@ Printer.prototype.hardware = function (hw) {
  * @return {[Printer]} printer  [the escpos printer instance]
  */
 
- Printer.prototype.vipbarcode = function (codeStr) {
+ Printer.prototype.barcode93 = function (codeStr) {
   // 都使用 CODE93 格式
   this.align('CT')
   // this.buffer.write('\x1D\x77\x01')
