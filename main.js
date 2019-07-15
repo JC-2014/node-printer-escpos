@@ -31,8 +31,15 @@ Printer.prototype.jobHandler = function (jobObject) {
   let that = this
   let jobId = jobObject.jobId
   let printerName = this.printerName
-  let jobInfo = printer.getJob(printerName, jobId)
-  console.log(jobInfo)
+  let jobInfo = {}
+  
+  try {
+    jobInfo = printer.getJob(printerName, jobId)
+    console.log('getjob1', jobInfo)
+  } catch (e) {
+    return complete('print failed')
+  }
+
   let time = jobInfo.time
   let status = jobInfo.status
 
@@ -45,7 +52,7 @@ Printer.prototype.jobHandler = function (jobObject) {
     setTimeout(function () {
       try {
         jobInfo = printer.getJob(printerName, jobId)
-        console.log(jobInfo)
+        console.log('getjob2', jobInfo)
         if (jobInfo.status.length === 0 && jobInfo.time === 0) {
           // 打印失败，取消队列
           let cancel = printer.setJob(printerName, jobId, 'CANCEL')
