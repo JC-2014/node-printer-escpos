@@ -35,44 +35,50 @@ Printer.prototype.jobHandler = function (jobObject) {
   
   try {
     jobInfo = printer.getJob(printerName, jobId)
-    console.log('getjob1', jobInfo)
+    console.log('getjob', jobInfo)
   } catch (e) {
     return complete('print failed')
   }
 
-  let time = jobInfo.time
   let status = jobInfo.status
 
   if (status.includes('ERROR')) {
-    return complete('print error')
-  }
-
-  if (jobInfo.status.length === 0 && jobInfo.time === 0) {
-    // 未打印 两秒后重新拉取下任务信息
-    setTimeout(function () {
-      try {
-        jobInfo = printer.getJob(printerName, jobId)
-        console.log('getjob2', jobInfo)
-        if (jobInfo.status.length === 0 && jobInfo.time === 0) {
-          // 打印失败，取消队列
-          let cancel = printer.setJob(printerName, jobId, 'CANCEL')
-          if (!cancel) console.log('cancel print fail')
-          complete('cancel print')
-        } else {
-          // 打印成功
-          complete()
-        }
-      } catch(e) {
-        console.log(e)
-        // 防止重复更新打印状态
-        if (jobObject.success) return
-        complete(e.message)
-      }
-    }, 2000)
+    try {
+      let cancel = printer.setJob(printerName, jobId, 'CANCEL')
+      complete('cancel print')
+    } catch(e) {
+      complete('print error')
+    }    
   } else {
-    // 打印成功
     complete()
   }
+
+  // if (jobInfo.status.length === 0 && jobInfo.time === 0) {
+  //   // 未打印 两秒后重新拉取下任务信息
+  //   setTimeout(function () {
+  //     try {
+  //       jobInfo = printer.getJob(printerName, jobId)
+  //       console.log('getjob2', jobInfo)
+  //       if (jobInfo.status.length === 0 && jobInfo.time === 0) {
+  //         // 打印失败，取消队列
+  //         let cancel = printer.setJob(printerName, jobId, 'CANCEL')
+  //         if (!cancel) console.log('cancel print fail')
+  //         complete('cancel print')
+  //       } else {
+  //         // 打印成功
+  //         complete()
+  //       }
+  //     } catch(e) {
+  //       console.log(e)
+  //       // 防止重复更新打印状态
+  //       if (jobObject.success) return
+  //       complete(e.message)
+  //     }
+  //   }, 2000)
+  // } else {
+  //   // 打印成功
+  //   complete()
+  // }
 
   function complete (error) {
     if (error) {
@@ -82,12 +88,12 @@ Printer.prototype.jobHandler = function (jobObject) {
     }
     that.printComplete && that.printComplete(jobObject)
     that.doNext(jobId)
-    console.log('print object', {
-      orderNumber: jobObject.orderNumber,
-      jobId: jobObject.jobId,
-      errorMsg: jobObject.errorMsg,
-      success: jobObject.success
-    })
+    // console.log('print object', {
+    //   orderNumber: jobObject.orderNumber,
+    //   jobId: jobObject.jobId,
+    //   errorMsg: jobObject.errorMsg,
+    //   success: jobObject.success
+    // })
   }
 }
 
