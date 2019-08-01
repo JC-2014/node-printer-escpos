@@ -384,13 +384,17 @@ Printer.prototype.hardware = function (hw) {
  * @return {[Printer]} printer  [the escpos printer instance]
  */
 
- Printer.prototype.barcode93 = function (codeStr) {
+ Printer.prototype.barcode93 = function (codeStr, height) {
   // 都使用 CODE93 格式
   this.align('CT')
   // this.buffer.write('\x1D\x77\x01')
   // this.buffer.write('\x1D\x68\x64')
   // this.buffer.write('\x1D\x66\x00')
   // this.buffer.write('\x1D\x48\x02')
+  if (height) {
+    this.buffer.write('\x1D\x68')
+    this.buffer.writeUInt16LE(height)
+  }
   this.buffer.write('\x1D\x6B\x48')
   let length = codeStr.length
   if (length < 2) {
