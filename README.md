@@ -4,8 +4,8 @@ node-printer-escpos
 # example
 <pre>
 <code>
-const Printer = require('./main')
-const { esc, Image, getPixels, getPrinters } = Printer
+let Printer = require('./main')
+let { esc, Image, getPixels, getPrinters } = Printer
 
 let usbPrinter = getPrinters().find(p => {
   return p.portName === 'USB001'
@@ -17,6 +17,7 @@ const printer = new Printer(usbPrinter.name)
 # print text
 <pre>
 <code>
+esc = new esc({}, {})
 esc.init().text('这里打印第一行吧？123！').flush()
 printer.print(esc.buffer._buffer)
 </code>
