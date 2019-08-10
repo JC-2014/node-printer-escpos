@@ -566,8 +566,8 @@ Printer.prototype.qrimage = function (content, options, callback) {
     height
   } = options
   if (width || height) {
-    if (width === 'auto') width = jimp.AUTO
-    if (height === 'auto') height = jimp.AUTO
+    if (width === 'auto' || width === undefined) width = jimp.AUTO
+    if (height === 'auto' || height === undefined) height = jimp.AUTO
     jimp.read(buffer).then(image => {
       image.resize(width, height)
       image.getBuffer(jimp.MIME_PNG, (error, buf) => {
@@ -587,6 +587,38 @@ Printer.prototype.qrimage = function (content, options, callback) {
   }
   return this;
 };
+
+Printer.prototype.bitmapQrimage = async function (str, options, callback) {
+  options = Object.assign({ type: 'png', mode: 'dhdw' }, options);
+  var buffer = qr.imageSync(str, options);
+  var type = ['image', options.type].join('/');
+  let self = this
+  let {
+    width,
+    height
+  } = options
+  if (width || height) {
+    if (width === 'auto' || width === undefined) width = jimp.AUTO
+    if (height === 'auto' || height === undefined) height = jimp.AUTO
+    jimp.read(buffer).then(image => {
+      image.resize(width, height)
+      image.getBuffer(jimp.MIME_PNG, (error, buf) => {
+        getPixels(buf, type, function (err, pixels) {
+          if (err) return callback && callback(err);
+          self.image(new Image(pixels))
+          callback && callback.call(self, null, self);
+        });
+      })
+    })
+  } else {
+    getPixels(buf, type, function (err, pixels) {
+      if (err) return callback && callback(err);
+      self.image(new Image(pixels))
+      callback && callback.call(self, null, self);
+    });
+  }  
+  return this
+}
 
 /**
  * [image description]
